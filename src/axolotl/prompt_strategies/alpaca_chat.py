@@ -70,6 +70,17 @@ class AlpacaQAPromptTokenizingStrategy(InstructionPromptTokenizingStrategy):
             prompt["answer"],
         )
 
+class AlpacaGenQAPromptTokenizingStrategy(InstructionPromptTokenizingStrategy):
+    """
+    Tokenizing strategy for AlpacaQA
+    """
+
+    def parse_instruction_fields(self, prompt) -> Tuple[str, str, str]:
+        return (
+            prompt["prompt"],
+            prompt["user"],
+            prompt["assistant"],
+        )
 
 class AlpacaInOutPromptTokenizingStrategy(InstructionPromptTokenizingStrategy):
     """
@@ -119,7 +130,13 @@ def load_in_out(tokenizer, cfg):
         cfg.train_on_inputs,
         cfg.sequence_len,
     )
-
+def load_genqa(tokenizer, cfg):
+    return AlpacaGenQAPromptTokenizingStrategy(
+        AlpacaChatPrompter(),
+        tokenizer,
+        cfg.train_on_inputs,
+        cfg.sequence_len,
+    )
 
 def load_camel_ai(tokenizer, cfg):
     return CamelAIPromptTokenizingStrategy(
