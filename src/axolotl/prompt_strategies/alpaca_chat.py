@@ -71,6 +71,18 @@ class AlpacaQAPromptTokenizingStrategy(InstructionPromptTokenizingStrategy):
         )
 
 
+class AlpacaInOutPromptTokenizingStrategy(InstructionPromptTokenizingStrategy):
+    """
+    Tokenizing strategy for AlpacaQA
+    """
+
+    def parse_instruction_fields(self, prompt) -> Tuple[str, str, str]:
+        return (
+            prompt["input"],
+            "",
+            prompt["output"],
+        )
+    
 class CamelAIPromptTokenizingStrategy(InstructionPromptTokenizingStrategy):
     """
     Tokenizing strategy for CamelAI datasets
@@ -92,9 +104,16 @@ def load_concise(tokenizer, cfg):
         cfg.sequence_len,
     )
 
-
 def load_qa(tokenizer, cfg):
     return AlpacaQAPromptTokenizingStrategy(
+        AlpacaChatPrompter(),
+        tokenizer,
+        cfg.train_on_inputs,
+        cfg.sequence_len,
+    )
+
+def load_in_out(tokenizer, cfg):
+    return AlpacaInOutPromptTokenizingStrategy(
         AlpacaChatPrompter(),
         tokenizer,
         cfg.train_on_inputs,
